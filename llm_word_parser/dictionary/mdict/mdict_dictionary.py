@@ -7,12 +7,20 @@ from llm_word_parser.dictionary.mdict.query.mdict_query import IndexBuilder
 class MDict(Dictionary):
     def __init__(self, id: Optional[int], name: str, mdx_file_path: str, active: bool = True):
         self.id = id
-        self.name = name
+        self._name = name
         self.path = mdx_file_path
         self.type = DictionaryType.mdict
-        self.active = active
+        self._active = active
         self.mdx_builder = IndexBuilder(mdx_file_path)
 
     def query(self, word: str) -> Optional[str]:
         definitions = self.mdx_builder.mdx_lookup(word)
         return definitions[0] if definitions else None
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def active(self) -> bool:
+        return self._active

@@ -3,8 +3,9 @@ import os
 import sqlite3
 from typing import List
 
+from llm_word_parser.config import add_scan_path, get_scan_paths
 from llm_word_parser.dictionary import Dictionary, DictionaryType
-from llm_word_parser.dictionary.mdict import MDict
+from llm_word_parser.dictionary.mdict.mdict_dictionary import MDict
 
 
 class DictionaryRepository:
@@ -27,6 +28,18 @@ class DictionaryRepository:
             cur.execute("DELETE FROM dictionaries WHERE id = ?", (dictionary_id,))
             con.commit()
 
+    def remove_all_dictionaries(self):
+        with sqlite3.connect(self.db_path) as con:
+            cur = con.cursor()
+            cur.execute("DELETE FROM dictionaries")
+            con.commit()
+
+    def add_scan_path(self, path: str):
+        add_scan_path(path)
+
+    def get_scan_paths(self) -> [str]:
+        return get_scan_paths()
+
     def set_active_state(self, dictionary_id: int, active: bool):
         with sqlite3.connect(self.db_path) as con:
             cur = con.cursor()
@@ -41,12 +54,18 @@ class DictionaryRepository:
             for row in cur.fetchall():
                 id, name, path, type, active = row
                 if type == 'mdict':
-                    dictionaries.append(MDict(id=id, name=name, path=path, active=bool(active)))
+                    dictionaries.append(MDict(id=id, name=name, mdx_file_path=path, active=bool(active)))
                 else:
                     raise ValueError(f"Unsupported dictionary type: {type}")
             return dictionaries
 
-    def scan(self, directory: str):
+    def scan(self):
+        """Scan all the directories in the scan paths and add any .mdx files found as dictionaries."""
+        for scan_path in self.get_scan_paths():
+            self.__scan(scan_path)
+
+    def __scan(self, directory: str):
+        self.remove_all_dictionaries()
         # Use os.path.join to create a path that includes all .mdx files in the given directory
         search_path = os.path.join(directory, "*.mdx")
 

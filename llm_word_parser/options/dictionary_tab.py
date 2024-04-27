@@ -1,10 +1,9 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QListWidgetItem, QInputDialog
-from aqt import mw
-from aqt.qt import QWidget, QVBoxLayout, QPushButton, QListWidget, QFileDialog, QMessageBox
+from aqt.qt import QWidget, QVBoxLayout, QPushButton, QListWidget, QMessageBox
 
 from llm_word_parser.db import db_path
-from llm_word_parser.dictionary.repo import DictionaryRepository
+from llm_word_parser.dictionary.repository import DictionaryRepository
 
 
 class DictionaryTab(QWidget):
@@ -39,7 +38,7 @@ class DictionaryTab(QWidget):
             self.refresh_dictionary_list()
 
     def rescan_dictionaries(self):
-        self.repository.rescan_dictionaries()
+        self.repository.scan()
         QMessageBox.information(self, "Rescan Complete", "Dictionaries have been rescanned.")
         self.refresh_dictionary_list()
 
@@ -48,7 +47,7 @@ class DictionaryTab(QWidget):
         dictionaries = self.repository.all_dictionaries()
         for dictionary in dictionaries:
             item = QListWidgetItem(f"{dictionary.name} - {'Active' if dictionary.active else 'Inactive'}")
-            item.setCheckState(Qt.Checked if dictionary.active else Qt.Unchecked)
+            item.setCheckState(Qt.CheckState.Checked if dictionary.active else Qt.CheckState.Unchecked)
             self.dictionary_list.addItem(item)
 
     def toggle_active_state(self, item: QListWidgetItem):
@@ -56,4 +55,4 @@ class DictionaryTab(QWidget):
         name = item.text().split(" - ")[0]
         new_state = not item.checkState()
         self.repository.set_active_state(name, new_state)
-        item.setCheckState(Qt.Checked if new_state else Qt.Unchecked)
+        item.setCheckState(Qt.CheckState.Checked if new_state else Qt.CheckState.Unchecked)

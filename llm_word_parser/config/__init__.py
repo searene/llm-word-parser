@@ -56,3 +56,8 @@ def remove_scan_path(path: str):
         scan_paths.remove(path)
         config['scan_paths'] = scan_paths
         mw.addonManager.writeConfig(__name__, config)
+
+
+def get_scan_paths() -> [str]:
+    config = mw.addonManager.getConfig(__name__)
+    return config.get('scan_paths', [])
