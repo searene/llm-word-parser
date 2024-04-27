@@ -1,1 +1,0 @@
-This directory will hold configuration settings, to persist through llm-word-parser upgrades.

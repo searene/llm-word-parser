@@ -1,3 +1,0 @@
-import aqt
-
-aqt.run()
