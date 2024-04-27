@@ -13,18 +13,13 @@ def setup_database():
     cur.execute('''CREATE TABLE IF NOT EXISTS documents
                    (id INTEGER PRIMARY KEY, filename TEXT, content TEXT)''')
     cur.execute('''
-                CREATE TABLE IF NOT EXISTS dictionaries (
-                    id INTEGER PRIMARY KEY,
-                    name TEXT UNIQUE,
-                    path TEXT,
-                    active INTEGER DEFAULT 1
-                )
-            ''')
-    cur.execute('''
-                CREATE TABLE IF NOT EXISTS scan_paths (
-                    id INTEGER PRIMARY KEY,
-                    path TEXT UNIQUE
-                )
-            ''')
+                    CREATE TABLE IF NOT EXISTS dictionaries (
+                        id INTEGER PRIMARY KEY,
+                        name TEXT UNIQUE,
+                        path TEXT,
+                        type INTEGER,
+                        active INTEGER DEFAULT 1
+                    )
+    ''')
     con.commit()
     con.close()

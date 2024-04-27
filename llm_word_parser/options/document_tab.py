@@ -10,7 +10,7 @@ from llm_word_parser.document.repository import DocumentRepository
 class DocumentTab(QWidget):
     def __init__(self, parent=None, repository: DocumentRepository = None):
         super(DocumentTab, self).__init__(parent)
-        self.repository = repository or DocumentRepository(db_path)
+        self.doc_repo = repository or DocumentRepository(db_path)
 
         self.layout = QVBoxLayout(self)
         self.document_list = QListWidget()
@@ -38,7 +38,9 @@ class DocumentTab(QWidget):
             filename = os.path.basename(file_path)
             try:
                 document = Document(None, filename, content)
-                self.repository.add(document)
+                self.doc_repo.add(document)
+                if self.doc_repo.count() == 1:
+                    self.doc_repo.set_as_default(document.id)
                 QMessageBox.information(self, "Import Successful", "Document has been imported successfully.")
             except Exception as e:
                 QMessageBox.warning(self, "Import Failed", str(e))
@@ -50,8 +52,8 @@ class DocumentTab(QWidget):
         if selected_item:
             document_name = selected_item.text()
             try:
-                document = self.repository.find_by_name(document_name)
-                self.repository.set_as_default(document.id)
+                document = self.doc_repo.find_by_name(document_name)
+                self.doc_repo.set_as_default(document.id)
                 QMessageBox.information(self, "Set Default", f"Default document set to '{document_name}' successfully.")
             except ValueError as e:
                 QMessageBox.warning(self, "Error", str(e))
@@ -59,7 +61,7 @@ class DocumentTab(QWidget):
     def refresh_document_list(self):
         self.document_list.clear()
         try:
-            document_names = [doc.filename for doc in self.repository.all_documents()]
+            document_names = [self.get_doc_name(doc) for doc in self.doc_repo.all_documents()]
             for name in document_names:
                 self.document_list.addItem(name)
         except Exception as e:
@@ -70,10 +72,17 @@ class DocumentTab(QWidget):
         if selected_item:
             document_name = selected_item.text()
             try:
-                document = self.repository.find_by_name(document_name)
-                self.repository.remove(document.id)
+                document = self.doc_repo.find_by_name(document_name)
+                if self.doc_repo.is_default(document.id):
+                    self.doc_repo.remove_default()
+                self.doc_repo.remove(document.id)
                 QMessageBox.information(self, "Deletion Successful", "Document has been deleted successfully.")
             except ValueError as e:
                 QMessageBox.warning(self, "Error", str(e))
             finally:
                 self.refresh_document_list()
+
+    def get_doc_name(self, doc: Document) -> str:
+        if self.doc_repo.is_default(doc.id):
+            return f"{doc.filename} (Default)"
+        return doc.filename
