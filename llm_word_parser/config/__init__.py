@@ -1,3 +1,4 @@
+import json
 import os
 from typing import List, Optional, Any
 
@@ -27,13 +28,13 @@ def get_user_files_folder() -> str:
 def set_default_document_id(doc_id: int) -> None:
     config = get_config()
     config['default_document_id'] = doc_id
-    __get_addon_manager().writeConfig(__name__, config)
+    write_config(config)
 
 
 def remove_default_document() -> None:
     config = get_config()
     config.pop('default_document_id', None)
-    __get_addon_manager().writeConfig(__name__, config)
+    write_config(config)
 
 
 def get_default_document_id() -> Optional[int]:
@@ -53,7 +54,7 @@ def add_scan_path(path: str) -> None:
     if path not in scan_paths:
         scan_paths.append(path)
         config['scan_paths'] = scan_paths
-        __get_addon_manager().writeConfig(__name__, config)
+        write_config(config)
 
 
 def remove_scan_path(path: str) -> None:
@@ -62,9 +63,18 @@ def remove_scan_path(path: str) -> None:
     if path in scan_paths:
         scan_paths.remove(path)
         config['scan_paths'] = scan_paths
-        __get_addon_manager().writeConfig(__name__, config)
+        write_config(config)
 
 
 def get_config() -> dict[str, Any]:
-    config = __get_addon_manager().getConfig(__name__)
-    return config if config is not None else {}
+    config_file_path = os.path.join(get_user_files_folder(), "config.json")
+    if not os.path.exists(config_file_path):
+        return {}
+    with open(config_file_path, 'r') as file:
+        return json.load(file)
+
+
+def write_config(config: dict[str, Any]) -> None:
+    config_file_path = os.path.join(get_user_files_folder(), "config.json")
+    with open(config_file_path, 'w') as file:
+        json.dump(config, file, indent=4)
