@@ -13,7 +13,7 @@ class DictionaryRepository:
     def __init__(self, db_path: str):
         self.db_path = db_path
 
-    def add_dictionary(self, name: str, path: str, dictionary_type: DictionaryType):
+    def add_dictionary(self, name: str, path: str, dictionary_type: DictionaryType) -> None:
         with sqlite3.connect(self.db_path) as con:
             cur = con.cursor()
             try:
@@ -23,25 +23,25 @@ class DictionaryRepository:
             except sqlite3.IntegrityError:
                 print("Dictionary already exists.")
 
-    def remove_dictionary(self, dictionary_id: int):
+    def remove_dictionary(self, dictionary_id: int) -> None:
         with sqlite3.connect(self.db_path) as con:
             cur = con.cursor()
             cur.execute("DELETE FROM dictionaries WHERE id = ?", (dictionary_id,))
             con.commit()
 
-    def remove_all_dictionaries(self):
+    def remove_all_dictionaries(self) -> None:
         with sqlite3.connect(self.db_path) as con:
             cur = con.cursor()
             cur.execute("DELETE FROM dictionaries")
             con.commit()
 
-    def add_scan_path(self, path: str):
+    def add_scan_path(self, path: str) -> None:
         add_scan_path(path)
 
     def get_scan_paths(self) -> List[str]:
         return get_scan_paths()
 
-    def set_active_state(self, dictionary_id: int, active: bool):
+    def set_active_state(self, dictionary_id: int, active: bool) -> None:
         with sqlite3.connect(self.db_path) as con:
             cur = con.cursor()
             cur.execute("UPDATE dictionaries SET active = ? WHERE id = ?", (1 if active else 0, dictionary_id))
@@ -60,12 +60,12 @@ class DictionaryRepository:
                     raise ValueError(f"Unsupported dictionary type: {type}")
             return dictionaries
 
-    def scan(self):
+    def scan(self) -> None:
         """Scan all the directories in the scan paths and add any .mdx files found as dictionaries."""
         for scan_path in self.get_scan_paths():
             self.__scan(scan_path)
 
-    def __scan(self, directory: str):
+    def __scan(self, directory: str) -> None:
         self.remove_all_dictionaries()
         # Use os.path.join to create a path that includes all .mdx files in the given directory
         search_path = os.path.join(directory, "*.mdx")

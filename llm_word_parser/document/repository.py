@@ -20,7 +20,7 @@ class DocumentRepository:
                 raise ValueError("Error while adding document")
             return res
 
-    def remove(self, document_id: int):
+    def remove(self, document_id: int) -> None:
         with sqlite3.connect(self.db_path) as con:
             cur = con.cursor()
             cur.execute("DELETE FROM documents WHERE id = ?", (document_id,))
@@ -41,13 +41,13 @@ class DocumentRepository:
             return None
         return self.find_by_id(doc_id)
 
-    def set_as_default(self, document_id: int):
+    def set_as_default(self, document_id: int) -> None:
         set_default_document_id(document_id)
 
     def is_default(self, document_id: int) -> bool:
         return document_id == get_default_document_id()
 
-    def remove_default(self):
+    def remove_default(self) -> None:
         remove_default_document()
 
     def find_by_name(self, filename: str) -> Document:

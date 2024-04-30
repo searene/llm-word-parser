@@ -6,7 +6,7 @@ from llm_word_parser.config import get_user_files_folder
 db_path = os.path.join(get_user_files_folder(), 'llm_word_parser.db')
 
 
-def setup_database():
+def setup_database() -> None:
     con = sqlite3.connect(db_path)
     cur = con.cursor()
     # Create table if it doesn't exist

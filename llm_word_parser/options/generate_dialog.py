@@ -16,7 +16,7 @@ class GenerateDialog(QDialog):
         self.setWindowTitle("Generate Contents")
         self.setup_ui()
 
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         layout = QVBoxLayout(self)
 
         # Textarea

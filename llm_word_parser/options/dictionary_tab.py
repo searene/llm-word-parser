@@ -39,7 +39,7 @@ class DictionaryTab(QWidget):
         QMessageBox.information(self, "Rescan Complete", "Dictionaries have been rescanned.")
         self.refresh_dictionary_list()
 
-    def refresh_dictionary_list(self):
+    def refresh_dictionary_list(self) -> None:
         self.dictionary_list.clear()
         dictionaries = self.repository.all_dictionaries()
         for dictionary in dictionaries:
