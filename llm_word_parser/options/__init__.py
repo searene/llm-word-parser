@@ -10,7 +10,6 @@ from aqt.utils import showInfo
 
 from llm_word_parser.options.dictionary_tab import DictionaryTab
 from llm_word_parser.options.document_tab import DocumentTab
-from aqt.gui_hooks import editor_did_init_buttons
 
 from llm_word_parser.options.generate_dialog import GenerateDialog
 

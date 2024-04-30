@@ -9,21 +9,21 @@ class DictionaryTab(QWidget):
         super(DictionaryTab, self).__init__(parent)
         self.repository = dictionary_repository
 
-        self.layout: QVBoxLayout = QVBoxLayout(self)
-        self.dictionary_list = QListWidget()
-        self.layout.addWidget(self.dictionary_list)
+        layout = QVBoxLayout(self)
+        self.dictionary_list = QListWidget(self)
+        layout.addWidget(self.dictionary_list)
 
         self.add_path_button = QPushButton("Add Scan Path")
         self.add_path_button.clicked.connect(self.add_scan_path)
-        self.layout.addWidget(self.add_path_button)
+        layout.addWidget(self.add_path_button)
 
         self.rescan_button = QPushButton("Rescan Dictionaries")
         self.rescan_button.clicked.connect(self.rescan_dictionaries)
-        self.layout.addWidget(self.rescan_button)
+        layout.addWidget(self.rescan_button)
 
         self.refresh_list_button = QPushButton("Refresh List")
         self.refresh_list_button.clicked.connect(self.refresh_dictionary_list)
-        self.layout.addWidget(self.refresh_list_button)
+        layout.addWidget(self.refresh_list_button)
 
         self.refresh_dictionary_list()
 
