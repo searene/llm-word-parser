@@ -23,14 +23,14 @@ import re
 import sys
 import json
 
-from ripemd128 import ripemd128
-from pureSalsa20 import Salsa20
+from .ripemd128 import ripemd128
+from .pureSalsa20 import Salsa20
 
 # zlib compression is used for engine version >=2.0
 import zlib
 # LZO compression is used for engine version < 2.0
 try:
-    import lzo
+    from . import lzo
 except ImportError:
     lzo = None
     print("LZO compression support is not available")
@@ -888,15 +888,6 @@ if __name__ == '__main__':
                         help='register_code,email_or_deviceid')
     parser.add_argument("filename", nargs='?', help="mdx file name")
     args = parser.parse_args()
-
-    # use GUI to select file, default to extract
-    if not args.filename:
-        import Tkinter
-        import tkFileDialog
-        root = Tkinter.Tk()
-        root.withdraw()
-        args.filename = tkFileDialog.askopenfilename(parent=root)
-        args.extract = True
 
     if not os.path.exists(args.filename):
         print("Please specify a valid MDX/MDD file")

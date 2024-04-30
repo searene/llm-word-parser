@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 
 class Document:
@@ -6,3 +6,7 @@ class Document:
         self.id = id
         self.filename = filename
         self.content = content
+
+    def get_contexts(self, word: str) -> List[str]:
+        """Get all the paragraphs that contains the given word"""
+        return [line for line in self.content.split("\n") if word in line]

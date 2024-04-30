@@ -1,9 +1,10 @@
 import glob
 import os
 import sqlite3
-from typing import List
+from typing import List, Sequence
 
 from llm_word_parser.config import add_scan_path, get_scan_paths
+from llm_word_parser.db import db_path
 from llm_word_parser.dictionary import Dictionary, DictionaryType
 from llm_word_parser.dictionary.mdict.mdict_dictionary import MDict
 
@@ -37,7 +38,7 @@ class DictionaryRepository:
     def add_scan_path(self, path: str):
         add_scan_path(path)
 
-    def get_scan_paths(self) -> [str]:
+    def get_scan_paths(self) -> List[str]:
         return get_scan_paths()
 
     def set_active_state(self, dictionary_id: int, active: bool):
@@ -46,7 +47,7 @@ class DictionaryRepository:
             cur.execute("UPDATE dictionaries SET active = ? WHERE id = ?", (1 if active else 0, dictionary_id))
             con.commit()
 
-    def all_dictionaries(self) -> List[Dictionary]:
+    def all_dictionaries(self) -> Sequence[Dictionary]:
         with sqlite3.connect(self.db_path) as con:
             cur = con.cursor()
             cur.execute("SELECT id, name, path, type, active FROM dictionaries ORDER BY name")
@@ -79,3 +80,6 @@ class DictionaryRepository:
 
             # Add the dictionary to the repository
             self.add_dictionary(name, file_path, DictionaryType.mdict)
+
+
+dictionary_repository = DictionaryRepository(db_path)

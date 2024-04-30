@@ -1,19 +1,16 @@
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QListWidgetItem, QInputDialog
-from aqt.qt import QWidget, QVBoxLayout, QPushButton, QListWidget, QMessageBox
+from aqt.qt import *
 
-from llm_word_parser.db import db_path
-from llm_word_parser.dictionary.repository import DictionaryRepository
+from llm_word_parser.dictionary.repository import dictionary_repository
 
 
 class DictionaryTab(QWidget):
-    def __init__(self, parent=None, repository: DictionaryRepository = None):
-        super(DictionaryTab, self).__init__(parent)
-        self.repository = repository or DictionaryRepository(db_path)
 
-        self.layout = QVBoxLayout(self)
+    def __init__(self, parent: QWidget):
+        super(DictionaryTab, self).__init__(parent)
+        self.repository = dictionary_repository
+
+        self.layout: QVBoxLayout = QVBoxLayout(self)
         self.dictionary_list = QListWidget()
-        self.dictionary_list.itemClicked.connect(self.toggle_active_state)
         self.layout.addWidget(self.dictionary_list)
 
         self.add_path_button = QPushButton("Add Scan Path")
@@ -49,10 +46,3 @@ class DictionaryTab(QWidget):
             item = QListWidgetItem(f"{dictionary.name} - {'Active' if dictionary.active else 'Inactive'}")
             item.setCheckState(Qt.CheckState.Checked if dictionary.active else Qt.CheckState.Unchecked)
             self.dictionary_list.addItem(item)
-
-    def toggle_active_state(self, item: QListWidgetItem):
-        # This toggles the state when an item is clicked.
-        name = item.text().split(" - ")[0]
-        new_state = not item.checkState()
-        self.repository.set_active_state(name, new_state)
-        item.setCheckState(Qt.CheckState.Checked if new_state else Qt.CheckState.Unchecked)

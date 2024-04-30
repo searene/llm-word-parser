@@ -1,7 +1,8 @@
 import sqlite3
-from typing import Optional
+from typing import Optional, List
 
 from llm_word_parser.config import set_default_document_id, get_default_document_id, remove_default_document
+from llm_word_parser.db import db_path
 from llm_word_parser.document import Document
 
 
@@ -14,7 +15,10 @@ class DocumentRepository:
             cur = con.cursor()
             cur.execute("INSERT INTO documents (filename, content) VALUES (?, ?)", (document.filename, document.content))
             con.commit()
-            return cur.lastrowid
+            res = cur.lastrowid
+            if res is None:
+                raise ValueError("Error while adding document")
+            return res
 
     def remove(self, document_id: int):
         with sqlite3.connect(self.db_path) as con:
@@ -55,8 +59,7 @@ class DocumentRepository:
                 raise ValueError(f"Document with filename '{filename}' not found")
             return Document(id=row[0], filename=row[1], content=row[2])
 
-    def all_documents(self) -> [Document]:
-        print(self.db_path)
+    def all_documents(self) -> List[Document]:
         with sqlite3.connect(self.db_path) as con:
             cur = con.cursor()
             cur.execute("SELECT id, filename, content FROM documents")
@@ -68,3 +71,6 @@ class DocumentRepository:
             cur = con.cursor()
             cur.execute("SELECT COUNT(*) FROM documents")
             return cur.fetchone()[0]
+
+
+document_repository = DocumentRepository(db_path)

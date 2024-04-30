@@ -4,13 +4,13 @@ from aqt.qt import QWidget, QVBoxLayout, QPushButton, QListWidget, QFileDialog, 
 
 from llm_word_parser.db import db_path
 from llm_word_parser.document import Document
-from llm_word_parser.document.repository import DocumentRepository
+from llm_word_parser.document.repository import DocumentRepository, document_repository
 
 
 class DocumentTab(QWidget):
-    def __init__(self, parent=None, repository: DocumentRepository = None):
+    def __init__(self, parent=None):
         super(DocumentTab, self).__init__(parent)
-        self.doc_repo = repository or DocumentRepository(db_path)
+        self.doc_repo = document_repository
 
         self.layout = QVBoxLayout(self)
         self.document_list = QListWidget()
@@ -61,7 +61,8 @@ class DocumentTab(QWidget):
     def refresh_document_list(self):
         self.document_list.clear()
         try:
-            document_names = [self.get_doc_name(doc) for doc in self.doc_repo.all_documents()]
+            all_docs = self.doc_repo.all_documents()
+            document_names = [self.get_doc_name(doc) for doc in all_docs]
             for name in document_names:
                 self.document_list.addItem(name)
         except Exception as e:

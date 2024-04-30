@@ -10,7 +10,7 @@ import sys
 import zlib
 from struct import pack
 
-from readmdict import MDX, MDD
+from .readmdict import MDX, MDD
 
 # LZO compression is used for engine version < 2.0
 try:
