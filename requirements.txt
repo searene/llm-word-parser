@@ -3,3 +3,7 @@ aqt==24.4.1
 PyQt6==6.7.0
 PyQt6-WebEngine==6.7.0
 mypy==1.10.0
+requests==2.31.0
+types-requests==2.31.0.20240406
+beautifulsoup4==4.12.3
+types-beautifulsoup4==4.12.0.20240229

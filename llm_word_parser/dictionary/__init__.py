@@ -8,6 +8,10 @@ class Dictionary(ABC):
     def __init__(self, id: Optional[int], name: str, path: str, type: DictionaryType, active: bool = True):
         pass
 
+    @abstractmethod
+    def query(self, word: str) -> Optional[str]:
+        pass
+
     @property
     @abstractmethod
     def name(self) -> str:

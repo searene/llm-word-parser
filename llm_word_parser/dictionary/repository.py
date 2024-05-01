@@ -4,7 +4,7 @@ import sqlite3
 from typing import List, Sequence
 
 from llm_word_parser.config import add_scan_path, get_scan_paths
-from llm_word_parser.db import db_path
+from llm_word_parser.db import get_db_path
 from llm_word_parser.dictionary import Dictionary, DictionaryType
 from llm_word_parser.dictionary.mdict.mdict_dictionary import MDict
 
@@ -60,6 +60,9 @@ class DictionaryRepository:
                     raise ValueError(f"Unsupported dictionary type: {type}")
             return dictionaries
 
+    def get_active_dictionaries(self) -> Sequence[Dictionary]:
+        return [dictionary for dictionary in self.all_dictionaries() if dictionary.active]
+
     def scan(self) -> None:
         """Scan all the directories in the scan paths and add any .mdx files found as dictionaries."""
         for scan_path in self.get_scan_paths():
@@ -80,6 +83,3 @@ class DictionaryRepository:
 
             # Add the dictionary to the repository
             self.add_dictionary(name, file_path, DictionaryType.mdict)
-
-
-dictionary_repository = DictionaryRepository(db_path)

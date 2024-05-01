@@ -1,15 +1,30 @@
 from aqt.qt import *
 
-from llm_word_parser.dictionary.repository import dictionary_repository
+from llm_word_parser.config import get_scan_paths
+from llm_word_parser.db import get_db_path
+from llm_word_parser.dictionary.repository import DictionaryRepository
 
 
 class DictionaryTab(QWidget):
 
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: QWidget, dictionary_repository: DictionaryRepository) -> None:
         super(DictionaryTab, self).__init__(parent)
         self.repository = dictionary_repository
 
         layout = QVBoxLayout(self)
+
+        # Create a label for the scan path list
+        self.scan_path_label = QLabel("Scan Paths:", self)
+        layout.addWidget(self.scan_path_label)
+
+        # Create a new QListWidget for the scan paths
+        self.scan_path_list = QListWidget(self)
+        layout.addWidget(self.scan_path_list)
+
+        # Create a label for the dictionary list
+        self.dictionary_label = QLabel("Dictionaries:", self)
+        layout.addWidget(self.dictionary_label)
+
         self.dictionary_list = QListWidget(self)
         layout.addWidget(self.dictionary_list)
 
@@ -25,6 +40,7 @@ class DictionaryTab(QWidget):
         self.refresh_list_button.clicked.connect(self.refresh_dictionary_list)
         layout.addWidget(self.refresh_list_button)
 
+        self.refresh_scan_path_list()
         self.refresh_dictionary_list()
 
     def add_scan_path(self):
@@ -32,6 +48,7 @@ class DictionaryTab(QWidget):
         if path:
             self.repository.add_scan_path(path)
             QMessageBox.information(self, "Success", "Scan path added successfully.")
+            self.refresh_scan_path_list()
             self.refresh_dictionary_list()
 
     def rescan_dictionaries(self):
@@ -46,3 +63,9 @@ class DictionaryTab(QWidget):
             item = QListWidgetItem(f"{dictionary.name} - {'Active' if dictionary.active else 'Inactive'}")
             item.setCheckState(Qt.CheckState.Checked if dictionary.active else Qt.CheckState.Unchecked)
             self.dictionary_list.addItem(item)
+
+    def refresh_scan_path_list(self) -> None:
+        self.scan_path_list.clear()
+        scan_paths = get_scan_paths()
+        for path in scan_paths:
+            self.scan_path_list.addItem(path)

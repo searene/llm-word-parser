@@ -54,7 +54,7 @@ def add_scan_path(path: str) -> None:
     if path not in scan_paths:
         scan_paths.append(path)
         config['scan_paths'] = scan_paths
-        write_config(config)
+    write_config(config)
 
 
 def remove_scan_path(path: str) -> None:

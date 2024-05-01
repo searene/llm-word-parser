@@ -10,7 +10,7 @@ import sys
 import zlib
 from struct import pack
 
-from .readmdict import MDX, MDD
+from llm_word_parser.dictionary.mdict.query.readmdict import MDX, MDD
 
 # LZO compression is used for engine version < 2.0
 try:
@@ -379,5 +379,5 @@ class IndexBuilder(object):
 
 if __name__ == '__main__':
     mdx_builder = IndexBuilder("/Users/joeygreen/Documents/dictionaries/LDOCE 5++ V2.15/LDOCE5++ V 2-15.mdx")
-    text = mdx_builder.mdx_lookup('dedication')
+    text = mdx_builder.mdx_lookup('decamp')
     print(text)

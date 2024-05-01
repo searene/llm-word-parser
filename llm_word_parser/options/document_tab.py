@@ -3,11 +3,11 @@ import os
 from aqt.qt import QWidget, QVBoxLayout, QPushButton, QListWidget, QFileDialog, QMessageBox
 
 from llm_word_parser.document import Document
-from llm_word_parser.document.repository import document_repository
+from llm_word_parser.document.repository import DocumentRepository
 
 
 class DocumentTab(QWidget):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: QWidget, document_repository: DocumentRepository) -> None:
         super(DocumentTab, self).__init__(parent)
         self.doc_repo = document_repository
 

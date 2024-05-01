@@ -2,7 +2,7 @@ import sqlite3
 from typing import Optional, List
 
 from llm_word_parser.config import set_default_document_id, get_default_document_id, remove_default_document
-from llm_word_parser.db import db_path
+from llm_word_parser.db import get_db_path
 from llm_word_parser.document import Document
 
 
@@ -71,6 +71,3 @@ class DocumentRepository:
             cur = con.cursor()
             cur.execute("SELECT COUNT(*) FROM documents")
             return cur.fetchone()[0]
-
-
-document_repository = DocumentRepository(db_path)
